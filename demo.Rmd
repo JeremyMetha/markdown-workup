@@ -1,0 +1,142 @@
+---
+title: "How to RMarkdown"
+author: "Jeremy Metha"
+date: "`r Sys.Date()`"
+output: html_document
+params:
+  continent: "Oceania" 
+  year: "2007"
+---
+
+
+
+## Markdown Syntax
+
+### Adding sections
+
+### Spacing
+
+For new paragraphs leave a line between...
+
+Each section you want to space out.
+
+While for new lines, 
+it's not enough to just press return.  
+You need to make sure you end your lines with at least 2 spaces.  
+Or
+it
+won't
+work
+
+### adding emphasis
+
+If you want to make things bold, wrap them up in **two asterisks**.  
+While for *italics*, you only need one.  
+***Using three will net you both!***
+
+and `back-quotes` will get you code-type text
+
+### lists
+
+ordered lists go like so
+
+1. thing
+  - subthing
+    1. sub subthing
+    2. numbered subthing
+2. thing
+3. thing
+
+a. thing
+b. thing
+c. thing
+
+other lists
+
+* blah
+* blah
+* blah
+  * sub-blah
+    * sub-sub-blah
+
+
+
+
+### blockquotes
+
+> if you have some important text you'd really like to  stick out.  
+you can use blockquotes
+>
+>> it can also be ***nested***
+
+### URLs
+<https://r4ds.had.co.nz/>
+
+#### making links out of URLs
+[R for data science](https://r4ds.had.co.nz/) is a ***fantastic*** resource to have on hand
+
+
+
+
+
+```{r}
+library(tidyverse)
+library(gapminder)
+df <- gapminder
+colours <- country_colors
+df <- cbind(df, colours)
+```
+## coding in markdown `r mean(df$gdpPercap)`
+The countries and populations included in this analysis are:
+
+> `r unique(df$country)`
+
+## plots and figures
+
+```{r, results='asis'}
+
+for (i in unique(df$continent)){
+  subset <- df %>% 
+    filter(continent == i)
+  plot <- ggplot(data = subset, aes(x = gdpPercap, y = lifeExp, size = pop))+
+    geom_point()+
+    ggtitle(paste("countries in", i, sep = " "))
+  print(plot)
+  
+  cat("\n\n")
+    }
+
+ggplot(data = df, aes(x = year, y = pop, colour = continent, group = country))+
+  geom_line()
+  
+
+```
+
+## tables
+
+
+```{r}
+summaries <- df %>% 
+  filter(year == params$year) %>% 
+  group_by(continent, year) %>% 
+  summarise(LifeExpectancy = mean(lifeExp))
+
+knitr::kable(summaries)
+
+```
+
+## model outputs
+
+```{r}
+
+library(broom)
+
+model <- lm(data = df, lifeExp ~ gdpPercap)
+
+tidy_model <- tidy(summary(model))
+
+tidy_model %>%
+  knitr::kable()
+
+```
+

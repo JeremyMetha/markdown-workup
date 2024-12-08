@@ -1,0 +1,45 @@
+---
+title: "Untitled"
+author: "Jeremy Metha"
+date: "`r Sys.Date()`"
+output: powerpoint_presentation
+params: 
+  year: 2007
+  continent: "Asia"
+---
+
+```{r, include = FALSE}
+library(tidyverse)
+library(broom)
+library(gapminder)
+
+df <- gapminder
+colours <- country_colors
+df <- cbind(df, colours)
+
+```
+
+
+```{r, echo = FALSE, message=FALSE}
+
+data_filtered <- df %>% 
+  filter(year == params$year) %>% 
+  filter(continent == params$continent)
+
+ggplot(data_filtered, aes(x = gdpPercap, y = lifeExp, size = pop, colour = continent))+
+  geom_point()
+
+life_summaries <- data_filtered %>% 
+  group_by(continent) %>% 
+  summarise(LifeExpectancy = mean(lifeExp))
+
+knitr::kable(life_summaries)
+
+model <- lm(data = data_filtered, lifeExp~ gdpPercap)
+
+tidy_model <- tidy(model)
+
+
+knitr::kable(tidy_model)
+                   
+```

@@ -1,0 +1,91 @@
+---
+title: "Markdown Challenges"
+author: "Jeremy Metha"
+date: "`r Sys.Date()`"
+output: html_document
+
+---
+
+
+## Challenge 1: Markdown Syntax
+
+Throughout this workshop we're going to be generating a report using the gapminder dataset!
+
+1. Install and load the `gapminder` package with 
+
+> `install.packages(gapminder)` and `library(gapminder)` 
+
+2. Create a new rmarkdown document
+
+
+3. Add a paragraph containing a list describing the columns of the `gapminder` dataframe
+  * `help("gapminder")` contains all the information you need
+  
+4. Add a *link* that will take peoiple to the gapminder source page when clicked
+  * https://gapminder.org/data/ is where you should be shooting for
+  
+  
+## Challenge 2: Coding in markdown
+
+1. Add a code chunk to set up your markdown document - this should include the packages you want to use in your analyses and the dataset you're going to be using. Do we need to see this code in the final knitted document?
+
+2. Add some inline code that will show what years are included in this dataset
+
+
+
+
+## Challenge 3: Visualising data
+
+1. Add a scatterplot visualising how gdp per capita influenced life expectancy in 2007 
+
+2. Add a table showing mean life expectancy for each continent in 2007. Use the `kable()` function to make it pretty!
+
+3. Run a linear regression relating gdp per capita and life expectancy in 2007. Use the tidy function to clean this up and kable to present it.
+```{r, echo = FALSE, message=FALSE}
+data_2007 <- df %>% 
+  filter(year == 2007)
+ggplot(data_2007, aes(x = gdpPercap, y = lifeExp, size = pop, colour = continent))+
+  geom_point()
+
+
+
+```
+
+
+## Challenge 4: Iteration and customisation of reports
+
+
+
+
+2. Create a copy of your markdown document and add params such that the report can be generated for any year/continent pairing
+
+```{r, echo = FALSE, message=FALSE}
+data_2007 <- df %>% 
+  filter(year == 2007)
+ggplot(data_2007, aes(x = gdpPercap, y = lifeExp, size = pop, colour = continent))+
+  geom_point()
+
+life_summaries <- data_2007 %>% 
+  group_by(continent) %>% 
+  summarise(LifeExpectancy = mean(lifeExp))
+
+knitr::kable(life_summaries)
+
+model <- lm(data = data_2007, lifeExp~ gdpPercap)
+
+tidy_model <- tidy(model)
+
+
+knitr::kable(tidy_model)
+                   
+```
+
+
+
+
+## Challenge 5: Different markdown formats!
+
+* Explore some of the different markdown output formats and change your report to generate:
+  1. a `pdf_document`
+  2. a `word_document`
+  3. a `powerpoint_presentation`
